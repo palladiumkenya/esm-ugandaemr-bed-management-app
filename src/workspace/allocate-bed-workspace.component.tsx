@@ -11,16 +11,11 @@ import {
 } from "@openmrs/esm-framework";
 import styles from "./allocate-bed.scss";
 import Overlay from "./overlay.component";
-import {
-  assignPatientBed,
-  endPatientQueue,
-  findLatestClinicalEncounter,
-} from "../bed-admission/bed-admission.resource";
+import { assignPatientBed } from "../bed-admission/bed-admission.resource";
 import BedLayoutList from "../bed-admission/bed-layout/bed-layout-list.component";
 import LocationComboBox from "../bed-admission/admitted-patients/location-combo-box.component";
 import { Bed } from "../types";
-import useSWR from "swr";
-import { EmptyState } from "@openmrs/esm-patient-common-lib";
+import { mutate } from "swr";
 
 interface WorkSpaceProps {
   closePanel: (e: boolean) => void;
@@ -33,9 +28,7 @@ interface WorkSpaceProps {
     locationTo: string;
     locationFrom: string;
     queueUuid: string;
-    encounter: {
-      uuid: string;
-    };
+    encounter: string;
   };
 }
 
@@ -47,17 +40,8 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
 }) => {
   const { t } = useTranslation();
   const isTablet = useLayoutType() === "tablet";
-  const {
-    restrictWardAdministrationToLoginLocation,
-    admissionFormUuid,
-    admissionEncounterTypeUuid,
-  } = useConfig();
-  const locationsUrl = `/ws/rest/v1/encounter?patient=${patientDetails.patientUuid}&encounterType=${admissionEncounterTypeUuid}&v=default`;
-  const {
-    data: encounters,
-    error,
-    isLoading: isLoadingEncounters,
-  } = useSWR<{ data }>(locationsUrl, openmrsFetch);
+  const { restrictWardAdministrationToLoginLocation } = useConfig();
+
   const [selectedBed, setSelectedBed] = useState<Bed>();
   const [isBedAssigned, setIsBedAssigned] = useState(false);
   const [isQueueEnded, setIsQueueEnded] = useState(false);
@@ -65,23 +49,12 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
     restrictWardAdministrationToLoginLocation ? patientDetails.locationUuid : ""
   );
 
-  let lastClinicalEncounter;
-  if (admissionEncounterTypeUuid !== undefined) {
-    const { data } = findLatestClinicalEncounter(
-      patientDetails.patientUuid,
-      admissionEncounterTypeUuid,
-      encounters,
-      admissionFormUuid
-    );
-    lastClinicalEncounter = data;
-  }
-
   const handleClick = (bed) => {
     setSelectedBed(bed);
   };
 
   const handleAssignBedToPatient = useCallback(() => {
-    if (lastClinicalEncounter === "") {
+    if (patientDetails.encounter === "") {
       showNotification({
         title: t("errorAssigningBed", "Error assigning bed"),
         kind: "error",
@@ -95,7 +68,7 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
     }
 
     const patientAndEncounterUuids = {
-      encounterUuid: lastClinicalEncounter,
+      encounterUuid: patientDetails.encounter,
       patientUuid: patientDetails.patientUuid,
     };
 
@@ -108,6 +81,19 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
           critical: true,
           description: `Bed ${selectedBed.bedNumber} was assigned to ${patientDetails.name} successfully.`,
         });
+        mutate(
+          (key) =>
+            typeof key === "string" &&
+            key.startsWith(
+              "rest/v1/kenyaemr/sql/?q=bedManagement.sqlGet.patientListForAdmission"
+            )
+        );
+        mutate(
+          (key) =>
+            typeof key === "string" &&
+            key.startsWith("/ws/rest/v1/admissionLocation")
+        );
+
         closePanel(false);
       })
       .catch((error) => {
@@ -118,7 +104,7 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
           description: error?.message,
         });
       });
-  }, [patientDetails, selectedBed, t, closePanel, lastClinicalEncounter]);
+  }, [patientDetails, selectedBed, t, closePanel]);
 
   return (
     <>
@@ -133,14 +119,14 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
                   <LocationComboBox setLocationUuid={setLocation} />
                 </>
               )}
-              {lastClinicalEncounter !== "" && (
+              {patientDetails.encounter !== "" && (
                 <BedLayoutList
                   locationUuid={locationUuid}
                   handleClick={handleClick}
                   patientDetails={patientDetails}
                 />
               )}
-              {lastClinicalEncounter === "" && (
+              {patientDetails.encounter === "" && (
                 <div className={styles.missingEncounter}>
                   {t(
                     "missingAdmissionEncounter",
@@ -172,7 +158,7 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
           <Button
             onClick={handleAssignBedToPatient}
             className={classNames(styles.button, {
-              [styles.disabled]: !lastClinicalEncounter || !selectedBed,
+              [styles.disabled]: !patientDetails.encounter || !selectedBed,
             })}
             kind="primary"
             type="submit"

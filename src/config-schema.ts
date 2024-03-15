@@ -18,14 +18,10 @@ export const configSchema = {
     _description: "UUID for the inpatient visit",
     _default: false,
   },
-  admissionEncounterTypeUuid: {
+  patientListForAdmissionUrl: {
     _type: Type.String,
-    _description: "UUID for the encounter type to use for admission",
-    _default: "465a92f2-baf8-42e9-9612-53064be868e8",
-  },
-  admissionFormUuid: {
-    _type: Type.String,
-    _description: "UUID for the admission form",
-    _default: "e958f902-64df-4819-afd4-7fb061f59308",
+    _description:
+      "Endpoint for fetching list of patients eligible for ward admission",
+    _default: "",
   },
 };
