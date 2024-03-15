@@ -88,6 +88,11 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
               "rest/v1/kenyaemr/sql/?q=bedManagement.sqlGet.patientListForAdmission"
             )
         );
+        mutate(
+          (key) =>
+            typeof key === "string" &&
+            key.startsWith("/ws/rest/v1/admissionLocation")
+        );
 
         closePanel(false);
       })

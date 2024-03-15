@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import useSWR from "swr";
-import { openmrsFetch } from "@openmrs/esm-framework";
+import { openmrsFetch, useConfig } from "@openmrs/esm-framework";
 
 interface PatientAdmissionListResponse {
   idNumber: string;
@@ -14,11 +14,11 @@ interface PatientAdmissionListResponse {
 }
 
 export function useEligibleAdmissions() {
-  const requestUrl = `rest/v1/kenyaemr/sql/?q=bedManagement.sqlGet.patientListForAdmission`;
+  const { patientListForAdmissionUrl } = useConfig();
   const { data, error, isLoading } = useSWR<
     { data: Array<PatientAdmissionListResponse> },
     Error
-  >(requestUrl, openmrsFetch);
+  >(patientListForAdmissionUrl ?? null, openmrsFetch);
 
   const patientQueueEntries = useMemo(() => {
     const rawData = data?.data ?? [];
