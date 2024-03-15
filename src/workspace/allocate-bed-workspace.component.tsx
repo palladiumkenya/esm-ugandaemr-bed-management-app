@@ -15,6 +15,7 @@ import { assignPatientBed } from "../bed-admission/bed-admission.resource";
 import BedLayoutList from "../bed-admission/bed-layout/bed-layout-list.component";
 import LocationComboBox from "../bed-admission/admitted-patients/location-combo-box.component";
 import { Bed } from "../types";
+import { mutate } from "swr";
 
 interface WorkSpaceProps {
   closePanel: (e: boolean) => void;
@@ -80,6 +81,14 @@ const AllocateBedWorkSpace: React.FC<WorkSpaceProps> = ({
           critical: true,
           description: `Bed ${selectedBed.bedNumber} was assigned to ${patientDetails.name} successfully.`,
         });
+        mutate(
+          (key) =>
+            typeof key === "string" &&
+            key.startsWith(
+              "rest/v1/kenyaemr/sql/?q=bedManagement.sqlGet.patientListForAdmission"
+            )
+        );
+
         closePanel(false);
       })
       .catch((error) => {
