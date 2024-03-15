@@ -64,7 +64,7 @@ const AdmittedPatientsTable: React.FC<ActiveVisitsTableProps> = ({
       setSelectedPatientDetails({
         name: entry.name,
         patientUuid: entry.patientUuid,
-        encounter: entry.encounter,
+        encounter: entry.admissionEncounterUuid,
         locationUuid: session?.sessionLocation?.uuid,
         locationTo: entry.locationTo,
         locationFrom: entry.locationFrom,

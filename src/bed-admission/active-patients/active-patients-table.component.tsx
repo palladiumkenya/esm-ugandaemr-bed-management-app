@@ -44,6 +44,7 @@ import AssignBedWorkSpace from "../../workspace/allocate-bed-workspace.component
 import AdmissionActionButton from "./admission-action-button.component";
 import { patientDetailsProps } from "../types";
 import ViewActionsMenu from "./view-action-menu.component";
+import { useEligibleAdmissions } from "./eligible-admissions.resource";
 
 interface ActiveVisitsTableProps {
   status: string;
@@ -66,15 +67,15 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
 
   const layout = useLayoutType();
 
-  const { patientQueueEntries, isLoading } = useActiveVisits();
   const { restrictWardAdministrationToLoginLocation } = useConfig();
 
+  const { patientEntries, isLoading } = useEligibleAdmissions();
   const handleBedAssigmentModal = useCallback(
     (entry) => {
       setSelectedPatientDetails({
         name: entry.name,
         patientUuid: entry.patientUuid,
-        encounter: entry.encounter,
+        encounter: entry.admissionEncounterUuid,
         locationUuid: session?.sessionLocation?.uuid,
         locationTo: entry.locationTo,
         locationFrom: entry.locationFrom,
@@ -108,7 +109,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
     goTo,
     results: paginatedQueueEntries,
     currentPage,
-  } = usePagination(patientQueueEntries, currentPageSize);
+  } = usePagination(patientEntries, currentPageSize);
 
   const tableHeaders = useMemo(
     () => [
@@ -153,6 +154,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
 
   const tableRows = useMemo(() => {
     return paginatedQueueEntries?.map((entry) => ({
+      id: `${entry.idNumber}`,
       ...entry,
       actions: {
         content: (
@@ -167,14 +169,14 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
   }
 
   if (
-    (!isLoading && patientQueueEntries && status === "pending") ||
+    (!isLoading && patientEntries && status === "pending") ||
     status === "completed" ||
     status === ""
   ) {
-    setPatientCount(patientQueueEntries.length);
+    setPatientCount(patientEntries.length);
   }
 
-  if (patientQueueEntries?.length) {
+  if (patientEntries?.length) {
     return (
       <div className={styles.container}>
         <div className={styles.headerBtnContainer}></div>
@@ -258,7 +260,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
                 page={currentPage}
                 pageSize={currentPageSize}
                 pageSizes={pageSizes}
-                totalItems={patientQueueEntries?.length}
+                totalItems={patientEntries?.length}
                 className={styles.pagination}
                 onChange={({ pageSize, page }) => {
                   if (pageSize !== currentPageSize) {
@@ -291,7 +293,7 @@ const ActivePatientsTable: React.FC<ActiveVisitsTableProps> = ({
 
   return (
     <EmptyState
-      msg={t("noQueueItems", "No queue items to display")}
+      msg={t("noPatientForAdmission", "There are no patients for admission")}
       helper=""
     />
   );

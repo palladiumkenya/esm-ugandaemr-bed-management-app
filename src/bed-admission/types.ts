@@ -123,9 +123,7 @@ export interface UuidDisplay {
 export interface patientDetailsProps {
   name: string;
   patientUuid: string;
-  encounter: {
-    uuid: string;
-  };
+  encounter: string;
   locationUuid: string;
   locationTo: string;
   locationFrom: string;
