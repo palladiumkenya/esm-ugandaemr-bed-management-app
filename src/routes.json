@@ -56,6 +56,24 @@
         "slot": "bed-admission-dashboard-slot",
         "title": "Bed-admission"
       }
+    },
+    {
+      "name": "in-patient-dashboard",
+      "slot": "patient-chart-in-patient-dashboard-slot",
+      "component": "inPatientChartDashboard",
+      "meta": {
+        "fullWidth": false
+      }
+    },
+    {
+      "name": "in-patient-dashboard-link",
+      "component": "inPatientChartLink",
+      "slot": "patient-chart-dashboard-slot",
+      "order": 7,
+      "meta": {
+        "slot": "patient-chart-in-patient-dashboard-slot",
+        "path": "in-patient"
+      }
     }
   ]
 }

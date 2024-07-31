@@ -6,6 +6,8 @@ import {
 import { configSchema } from "./config-schema";
 import { createLeftPanelLink } from "./left-panel-link.component";
 import { createDashboardLink } from "./bed-admission/createDashboardLink";
+import { createDashboardLink as commonLibCreateDashboardLink } from "@openmrs/esm-patient-common-lib";
+import InPatient from "./in-patient/in-patient.component";
 
 const moduleName = "@kenyaemr/esm-bed-management-app";
 
@@ -84,3 +86,16 @@ export const bedAdmissionDashboardLink = getSyncLifecycle(
   }),
   options
 );
+const dashboradMeta = {
+  slot: "patient-chart-in-patient-dashboard-slot",
+  path: "in-patient",
+  title: "In-Patient",
+  moduleName: "@kenyaemr/esm-bed-management-app",
+};
+
+export const inPatientChartLink = getSyncLifecycle(
+  commonLibCreateDashboardLink({ ...dashboradMeta }),
+  options
+);
+
+export const inPatientChartDashboard = getSyncLifecycle(InPatient, options);
