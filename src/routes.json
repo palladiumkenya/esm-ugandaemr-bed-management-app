@@ -72,7 +72,10 @@
       "order": 7,
       "meta": {
         "slot": "patient-chart-in-patient-dashboard-slot",
-        "path": "in-patient"
+        "path": "in-patient",
+        "layoutMode": "anchored",
+        "columns": 1,
+        "columnSpan": 1
       }
     }
   ]
