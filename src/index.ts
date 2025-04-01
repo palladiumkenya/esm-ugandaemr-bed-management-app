@@ -2,6 +2,8 @@ import {
   getAsyncLifecycle,
   defineConfigSchema,
   getSyncLifecycle,
+  registerFeatureFlag,
+  getFeatureFlag,
 } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 import { createLeftPanelLink } from "./left-panel-link.component";
@@ -23,6 +25,11 @@ export const importTranslation = require.context(
 
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
+  registerFeatureFlag(
+    "mortuary-compartment-allocation",
+    "Mortuary compartment allocation",
+    "Mortuary feature flag, this enables and disables the mortuary compartment allocation feature"
+  );
 }
 
 export const root = getAsyncLifecycle(
@@ -52,6 +59,14 @@ export const adminLeftPanelLink = getSyncLifecycle(
   createLeftPanelLink({
     name: "administration",
     title: "Ward Allocation",
+  }),
+  options
+);
+
+export const compartmentLeftPanelLink = getSyncLifecycle(
+  createLeftPanelLink({
+    name: "compartment-administration",
+    title: "Compartment Allocation",
   }),
   options
 );
