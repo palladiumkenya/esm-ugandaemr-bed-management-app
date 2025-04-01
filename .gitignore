@@ -79,3 +79,4 @@ dist/
 
 # Turborepo
 .turbo
+.qodo

@@ -26,7 +26,7 @@ export const importTranslation = require.context(
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
   registerFeatureFlag(
-    "mortuary-compartment-allocation",
+    "mortuaryCompartmentAllocationEnabled",
     "Mortuary compartment allocation",
     "Mortuary feature flag, this enables and disables the mortuary compartment allocation feature"
   );
