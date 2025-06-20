@@ -4,7 +4,6 @@ import styles from "./bed-admission-tabs-styles.scss";
 import { useTranslation } from "react-i18next";
 import ActivePatientsTable from "./active-patients/active-patients-table.component";
 import AdmittedPatientsList from "./admitted-patients/admitted-patients.component";
-import DischargedPatientsList from "./discharged-patients/discharged-patients.componet";
 import WardCard from "../ward-card/ward-card.component";
 
 const BedAdmissionTabs: React.FC = () => {
