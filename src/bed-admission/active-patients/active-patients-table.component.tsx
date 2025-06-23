@@ -29,21 +29,12 @@ import {
 } from "@openmrs/esm-framework";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  formatWaitTime,
-  getOriginFromPathName,
-  getTagColor,
-  getTagType,
-  trimVisitNumber,
-} from "../helpers/functions";
+import { getOriginFromPathName } from "../helpers/functions";
 import styles from "./styles.scss";
-import { usePatientQueuesList } from "./patient-queues.resource";
-import { useActiveVisits } from "./active-visits.resource";
 import EmptyState from "../../empty-state/empty-state.component";
 import AssignBedWorkSpace from "../../workspace/allocate-bed-workspace.component";
 import AdmissionActionButton from "./admission-action-button.component";
 import { patientDetailsProps } from "../types";
-import ViewActionsMenu from "./view-action-menu.component";
 import { useEligibleAdmissions } from "./eligible-admissions.resource";
 
 interface ActiveVisitsTableProps {
