@@ -23,9 +23,9 @@ jobs:
       TURBO_TEAM: ${{ github.repository_owner }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
           registry-url: "https://registry.npmjs.org"
@@ -41,17 +41,17 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
-      - name: Setup local cache server for Turborepo
-        uses: felixmosh/turborepo-gh-artifacts@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          server-token: ${{ secrets.TURBO_SERVER_TOKEN }}
+      # - name: Setup local cache server for Turborepo
+      #   uses: felixmosh/turborepo-gh-artifacts@v2
+      #   with:
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     server-token: ${{ secrets.TURBO_SERVER_TOKEN }}
 
       - run: yarn verify
-      - run: yarn turbo build --color --concurrency=5
+      - run: yarn turbo run build --filter='...[./*]' --color --concurrency=5
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: |
@@ -64,13 +64,13 @@ jobs:
     if: ${{ github.event_name == 'push' }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
           registry-url: "https://registry.npmjs.org"
@@ -86,17 +86,17 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
 
-      - name: Setup local cache server for Turborepo
-        uses: felixmosh/turborepo-gh-artifacts@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          server-token: ${{ secrets.TURBO_SERVER_TOKEN }}
+      # - name: Setup local cache server for Turborepo
+      #   uses: felixmosh/turborepo-gh-artifacts@v2
+      #   with:
+      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
+      #     server-token: ${{ secrets.TURBO_SERVER_TOKEN }}
 
       - name: Version
         run: yarn version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
 
       - name: Build
-        run: yarn turbo build --color --concurrency=5
+        run: yarn turbo run build --cache-dir=".turbo" --concurrency=5 --no-daemon
 
       - run: git config user.email "<>" && git config user.name "UgandaEMR CI"
       - run: git add . && git commit -m "Prerelease version" --no-verify
@@ -107,7 +107,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: |
@@ -136,11 +136,11 @@ jobs:
     if: ${{ github.event_name == 'release' }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
           registry-url: 'https://registry.npmjs.org'
