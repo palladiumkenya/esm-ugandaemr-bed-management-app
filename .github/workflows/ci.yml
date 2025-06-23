@@ -60,58 +60,45 @@ jobs:
   pre_release:
     runs-on: ubuntu-latest
     needs: build
-
-    if: ${{ github.event_name == 'push' }}
+    if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18.x"
+          node-version: "18"
           registry-url: "https://registry.npmjs.org"
-
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+          cache: 'yarn'
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: yarn install --immutable
-
-      # - name: Setup local cache server for Turborepo
-      #   uses: felixmosh/turborepo-gh-artifacts@v2
-      #   with:
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
-      #     server-token: ${{ secrets.TURBO_SERVER_TOKEN }}
+        run: yarn install --frozen-lockfile
+        env:
+          YARN_ENABLE_IMMUTABLE_INSTALLS: false
 
       - name: Version
         run: yarn version "$(node -e "console.log(require('semver').inc(require('./package.json').version, 'patch'))")-pre.${{ github.run_number }}"
 
       - name: Build
         run: yarn turbo run build --cache-dir=".turbo" --concurrency=5 --no-daemon
+        env:
+          TURBO_CACHE_KEY: ${{ github.sha }}
 
-      - run: git config user.email "<>" && git config user.name "UgandaEMR CI"
-      - run: git add . && git commit -m "Prerelease version" --no-verify
+      - name: Configure Git
+        run: |
+          git config user.email "info@thepalladiumgroup.com"
+          git config user.name "KenyaEMR CI"
 
-      - name: Pre-release
-        run: yarn config set npmAuthToken "${NODE_AUTH_TOKEN}" && yarn npm publish --access public --tag next
+      - name: Publish pre-release
+        run: |
+          yarn config set npmAuthToken "${NODE_AUTH_TOKEN}"
+          yarn run ci:prepublish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: |
-            dist
+          NPM_CONFIG_PROVENANCE: true
 
   Trigger_server_build:
     runs-on: ubuntu-latest
