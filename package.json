@@ -20,7 +20,7 @@
     "prepare": "husky install",
     "extract-translations": "i18next 'src/**/*.component.tsx' --config ./i18next-parser.config.js"
   },
-   "resolutions": {
+  "resolutions": {
     "webpack": "^5.88.1"
   },
   "husky": {
