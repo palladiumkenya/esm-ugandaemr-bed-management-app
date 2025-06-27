@@ -8,6 +8,12 @@ export const configSchema = {
       "UUID for the location tag of the `Admission Location`. Patients may only be admitted to inpatient care in a location with this tag",
     _default: "839c65c7-9998-4b90-b80b-39727dfe9fa2",
   },
+  mortuaryLocationTagUuid: {
+    _type: Type.UUID,
+    _description:
+      "UUID for the location tag of the `Mortuary Location`. Deceased patients may only be admitted to mortuary care in a location with this tag",
+    _default: "1dbbfe22-d21f-499c-bf33-cc9f75b6c7e8",
+  },
   inpatientVisitUuid: {
     _type: Type.UUID,
     _description: "UUID for the inpatient visit",
@@ -23,11 +29,9 @@ export const configSchema = {
     _description:
       "Endpoint for fetching list of patients eligible for ward admission",
     _default: "",
-  },
-  morgueCompartmentTagUuid: {
-    _type: Type.UUID,
-    _description:
-      "UUID for the location tag of the `morgue compartment`. Deceased patients may only be admitted to mortuary care in a location with this tag",
-    _default: "0803aa41-ef5f-42e1-9c6d-8c762a54250c",
-  },
+  }
 };
+
+export type ConfigObject = {
+  mortuaryLocationTagUuid: string;
+}

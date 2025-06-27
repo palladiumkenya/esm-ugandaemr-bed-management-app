@@ -1,0 +1,76 @@
+@use '@carbon/colors';
+@use '@carbon/layout';
+@use "@carbon/type";
+
+
+.widgetCard {
+  background-color: colors.$white-0;
+  border: 1px solid colors.$gray-20;
+  margin-bottom: 1rem;
+}
+
+.flexContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: layout.$spacing-05;
+}
+
+.filterContainer {
+  display: flex;
+  align-items: center;
+  gap: layout.$spacing-04;
+}
+
+
+.headerActions {
+  display: flex;
+  gap: layout.$spacing-03;
+  align-items: center;
+}
+
+.tileContainer {
+  display: flex;
+  justify-content: center;
+  padding: layout.$spacing-07 layout.$spacing-05;
+  background-color: colors.$white;
+}
+
+.tile {
+  max-width: 500px;
+  width: 100%;
+  padding: layout.$spacing-07;
+  text-align: center;
+  background-color: #fff;
+
+}
+
+.tileContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: layout.$spacing-04;
+}
+
+.content {
+  @include type.type-style('heading-03');
+  margin: 0;
+}
+.emptyStateActions {
+  display: flex;
+  flex-direction: column;
+  gap: layout.$spacing-03;
+  width: 100%;
+  max-width: 300px;
+  margin-top: layout.$spacing-04;
+  
+  button {
+    width: 100%;
+  }
+}
+
+
+
+
+
+

@@ -8,6 +8,8 @@ import {
 import { configSchema } from "./config-schema";
 import { createLeftPanelLink } from "./left-panel-link.component";
 import { createDashboardLink } from "./bed-admission/createDashboardLink";
+import AddCompartmentWorkspace from "./mortuary/form/add-compartment/add-compartment.workspace";
+import AddMortuaryLocationWorkspace from "./mortuary/form/add-mortuary-location/add-mortuary-location.workspace";
 
 const moduleName = "@kenyaemr/esm-bed-management-app";
 
@@ -25,11 +27,6 @@ export const importTranslation = require.context(
 
 export function startupApp() {
   defineConfigSchema(moduleName, configSchema);
-  registerFeatureFlag(
-    "mortuaryCompartmentAllocationEnabled",
-    "Mortuary compartment allocation",
-    "Mortuary feature flag, this enables and disables the mortuary compartment allocation feature"
-  );
 }
 
 export const root = getAsyncLifecycle(
@@ -63,13 +60,25 @@ export const adminLeftPanelLink = getSyncLifecycle(
   options
 );
 
-export const compartmentLeftPanelLink = getSyncLifecycle(
+// Mortuary
+export const MortuaryAllocationLeftPanelLink = getSyncLifecycle(
   createLeftPanelLink({
-    name: "compartment-administration",
-    title: "Compartment Allocation",
+    name: "mortuary-administration",
+    title: "Mortuary Allocation",
   }),
   options
 );
+
+export const addCompartmentWorkspace = getSyncLifecycle(
+  AddCompartmentWorkspace,
+  options
+);
+
+export const addMortuaryLocation =  getSyncLifecycle(
+  AddMortuaryLocationWorkspace,
+  options
+);
+
 export const wardLeftPanelLink = getSyncLifecycle(
   createLeftPanelLink({
     name: "ward",
