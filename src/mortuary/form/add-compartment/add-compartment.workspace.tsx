@@ -92,7 +92,6 @@ const AddCompartmentWorkspace: React.FC<AddCompartmentWorkspaceProps> = ({
 
   const { data: admissionLocations, isLoading: locationsLoading } =
     useLocationsByTag(mortuaryLocationTagUuid);
-    console.log("admissionLocations", admissionLocations);
   const { bedTypes } = useBedType();
 
   const occupancyStatuses = ["Available", "Occupied"];

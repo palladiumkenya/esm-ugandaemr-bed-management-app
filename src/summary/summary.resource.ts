@@ -416,14 +416,6 @@ export function useMortuaryLocations(mortuaryLocationTagUuid: string) {
           const occupiedCompartments = compartments.filter(bed => bed.status === 'OCCUPIED').length;
           const availableCompartments = totalCompartments - occupiedCompartments;
 
-          console.log(`Mortuary location ${ward.display}:`, {
-            location: ward,
-            totalCompartments,
-            occupiedCompartments,
-            availableCompartments,
-            compartments
-          });
-
           return {
             location: ward,
             totalCompartments,
@@ -433,11 +425,9 @@ export function useMortuaryLocations(mortuaryLocationTagUuid: string) {
         });
 
         const results = await Promise.all(mortuaryPromises);
-        console.log("All mortuary locations summary:", results);
         setMortuaryData(results);
         setError(null);
       } catch (err) {
-        console.error("Error fetching mortuary data:", err);
         setError(err);
       } finally {
         setIsLoading(false);

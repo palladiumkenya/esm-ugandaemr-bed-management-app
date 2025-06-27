@@ -53,9 +53,6 @@ const CompartmentAdministrationTable: React.FC = () => {
   const { data: mortuaryLocations, isLoading: mortuaryLocationsLoading } =
     useLocationsByTag(mortuaryLocationTagUuid);
 
-  // Console log mortuary locations
-  console.log("mortuaryLocations", mortuaryLocations);
-
   const hasMortuaryLocations =
     mortuaryLocations && mortuaryLocations.length > 0;
 
@@ -84,8 +81,6 @@ const CompartmentAdministrationTable: React.FC = () => {
     ? [].concat(...wardsGroupedByLocations)
     : [];
 
-  // Console log compartments (beds) mapped to locations
-  console.log("bedsMappedToLocation (compartments):", bedsMappedToLocation);
 
   const { data, isLoading, error, isValidating, mutate } = useWards(
     mortuaryLocationTagUuid
@@ -121,18 +116,11 @@ const CompartmentAdministrationTable: React.FC = () => {
 
   useEffect(() => {
     if (!isLoading && data) {
-      console.log("Ward data from useWards:", data);
-
       setIsBedDataLoading(true);
       const fetchData = async () => {
         const promises = data.data.results.map(async (ward) => {
-          console.log("Processing ward (location):", ward);
 
           const bedLocations = await findBedByLocation(ward.uuid);
-          console.log(
-            `Beds found for ward ${ward.display}:`,
-            bedLocations.data.results
-          );
 
           if (bedLocations.data.results.length) {
             const bedsWithLocation = bedLocations.data.results.map((bed) => ({
@@ -140,26 +128,12 @@ const CompartmentAdministrationTable: React.FC = () => {
               location: ward,
             }));
 
-            // Console log each compartment with its parent location
-            bedsWithLocation.forEach((compartment) => {
-              console.log("Compartment:", {
-                compartmentId: compartment.bedNumber,
-                compartmentUuid: compartment.uuid,
-                compartmentStatus: compartment.status,
-                parentLocationName: compartment.location.display,
-                parentLocationUuid: compartment.location.uuid,
-                fullCompartmentData: compartment,
-              });
-            });
-
             return bedsWithLocation;
           }
           return null;
         });
 
         const updatedWards = (await Promise.all(promises)).filter(Boolean);
-        console.log("All compartments grouped by locations:", updatedWards);
-
         setWardsGroupedByLocation(updatedWards);
         setIsBedDataLoading(false);
       };
@@ -191,17 +165,9 @@ const CompartmentAdministrationTable: React.FC = () => {
   ];
 
   const tableRows = useMemo(() => {
-    // Console log the results being rendered in the table
-    console.log("Table results (current page compartments):", results);
+    
 
     return results.map((compartment) => {
-      // Console log each compartment being rendered
-      console.log("Rendering compartment in table:", {
-        compartmentId: compartment.bedNumber,
-        locationName: compartment.location.display,
-        status: compartment.status,
-        uuid: compartment.uuid,
-      });
 
       return {
         id: compartment.uuid,
@@ -217,7 +183,6 @@ const CompartmentAdministrationTable: React.FC = () => {
               enterDelayMs={300}
               renderIcon={Edit}
               onClick={() => {
-                console.log("Editing compartment:", compartment);
                 launchWorkspace("add-compartment-workspace", {
                   workspaceTitle: t("editCompartment", "Edit Compartment"),
                   bed: compartment,

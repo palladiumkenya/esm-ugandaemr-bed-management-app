@@ -29,9 +29,6 @@ const Summary: React.FC = () => {
     error: mortuaryError,
   } = useMortuaryLocations(mortuaryLocationTagUuid);
 
-  console.log("admissionLocations", admissionLocations);
-  console.log("mortuaryLocations", mortuaryLocations);
-
   const isLoading = admissionLoading || mortuaryLoading;
   const error = admissionError || mortuaryError;
 
