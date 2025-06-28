@@ -1,6 +1,7 @@
 import useSWR from "swr";
 import { FetchResponse, openmrsFetch, showToast } from "@openmrs/esm-framework";
 import type { AdmissionLocation, Bed, MappedBedData } from "../types";
+import { useEffect, useState } from "react";
 
 export const useLocationsByTag = (locationUuid: string) => {
   const locationsUrl = `/ws/rest/v1/location?tag=${locationUuid}&v=full`;
@@ -376,4 +377,87 @@ export async function saveWard({
       critical: true,
     });
   }
+}
+
+
+interface MortuaryLocationSummary {
+  location: {
+    uuid: string;
+    display: string;
+    name: string;
+  };
+  totalCompartments: number;
+  occupiedCompartments: number;
+  availableCompartments: number;
+}
+
+export function useMortuaryLocations(mortuaryLocationTagUuid: string) {
+  const [mortuaryData, setMortuaryData] = useState<MortuaryLocationSummary[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const { data: mortuaryLocations, error: locationError } = useLocationsByTag(mortuaryLocationTagUuid);
+  const { data: wardData, error: wardError } = useWards(mortuaryLocationTagUuid);
+
+  useEffect(() => {
+    const fetchMortuaryData = async () => {
+      if (!mortuaryLocations || !wardData) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        const mortuaryPromises = wardData.data.results.map(async (ward) => {
+          const bedResponse = await findBedByLocation(ward.uuid);
+          const compartments = bedResponse.data.results;
+          
+          const totalCompartments = compartments.length;
+          const occupiedCompartments = compartments.filter(bed => bed.status === 'OCCUPIED').length;
+          const availableCompartments = totalCompartments - occupiedCompartments;
+
+          return {
+            location: ward,
+            totalCompartments,
+            occupiedCompartments,
+            availableCompartments,
+          };
+        });
+
+        const results = await Promise.all(mortuaryPromises);
+        setMortuaryData(results);
+        setError(null);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMortuaryData();
+  }, [mortuaryLocations, wardData]);
+
+  const combinedError = locationError || wardError || error;
+
+  return {
+    data: mortuaryData,
+    isLoading,
+    error: combinedError,
+  };
+}
+
+export function useMortuaryLocationsSummary(mortuaryLocationTagUuid: string) {
+  const { data: locations, isLoading, error } = useLocationsByTag(mortuaryLocationTagUuid);
+  
+  const mortuaryLocations = locations?.map(location => ({
+    location,
+    totalCompartments: 0,
+    occupiedCompartments: 0,
+    availableCompartments: 0,
+  })) || [];
+  return {
+    data: mortuaryLocations,
+    isLoading,
+    error,
+  };
 }

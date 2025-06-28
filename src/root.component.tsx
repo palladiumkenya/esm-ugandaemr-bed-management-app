@@ -9,6 +9,9 @@ import styles from "./root.scss";
 import BedTagAdministrationTable from "./bed-admission/bed-tag/bed-tag-administration-table.component";
 import BedTypeAdministrationTable from "./bed-admission/bed-type/bed-type-administration-table.component";
 import WardAdministrationTable from "./bed-admission/ward/ward-administration-table.component";
+import CompartmentAdministrationTable from "./mortuary/table/compartment/compartment-administration-table.component";
+import { OverviewComponent } from "./mortuary/components/overview.component";
+import MortuaryWithCompartment from "./mortuary/table/summary/summary.component";
 
 const Root: React.FC = () => {
   const spaBasePath = window.spaBase;
@@ -30,6 +33,14 @@ const Root: React.FC = () => {
           <Route path="/location/:location" element={<WardWithBeds />} />
           <Route path="/ward" element={<WardAdministrationTable />} />
           <Route path="/administration" element={<BedAdministrationTable />} />
+          <Route
+            path="/mortuary-administration"
+            element={<OverviewComponent />}
+          />
+          <Route
+            path="/mortuary-summary/:location"
+            element={<MortuaryWithCompartment />}
+          />
           <Route path="/bed-tag" element={<BedTagAdministrationTable />} />
           <Route path="/bed-type" element={<BedTypeAdministrationTable />} />
         </Routes>

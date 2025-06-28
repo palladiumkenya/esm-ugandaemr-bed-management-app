@@ -1,24 +1,16 @@
 import React from "react";
-import {
-  ConfigurableLink,
-  formatDate,
-  useSession,
-} from "@openmrs/esm-framework";
 import { useTranslation } from "react-i18next";
 import { Calendar, Location } from "@carbon/react/icons";
-import Illustration from "./illustration.component";
-import styles from "./header.scss";
+import { useSession, formatDate } from "@openmrs/esm-framework";
+import styles from "./mortuary-header.scss";
+import MortuaryIllustration from "./mortuary-illustration.component";
 
-type HeaderProps = {
-  route: string;
-  headerTitle?: string;
-  illustration?: React.ReactNode;
-};
+interface MortuaryHeaderProps {
+  title: string;
+}
 
-const Header: React.FC<HeaderProps> = ({
-  route,
-  headerTitle = "Bed Management",
-  illustration,
+export const MortuaryHeader: React.FC<MortuaryHeaderProps> = ({
+  title,
 }) => {
   const { t } = useTranslation();
   const userSession = useSession();
@@ -27,12 +19,10 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <div className={styles.header}>
       <div className={styles["left-justified-items"]}>
-        <ConfigurableLink to={`${window.getOpenmrsSpaBase()}bed-management`}>
-          {illustration || <Illustration />}
-        </ConfigurableLink>
+        <MortuaryIllustration />
         <div className={styles["page-labels"]}>
-          <p>{t("headerTitle", headerTitle)}</p>
-          <p className={styles["page-name"]}>{route}</p>
+          <p>{t("mortuary", "Mortuary")}</p>
+          <p className={styles["page-name"]}>{title}</p>
         </div>
       </div>
       <div className={styles["right-justified-items"]}>
@@ -49,5 +39,3 @@ const Header: React.FC<HeaderProps> = ({
     </div>
   );
 };
-
-export default Header;

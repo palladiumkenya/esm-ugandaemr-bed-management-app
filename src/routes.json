@@ -21,6 +21,11 @@
       "name": "bed-administration-left-panel-link",
       "slot": "bed-management-left-panel-slot"
     },
+     {
+      "component": "MortuaryAllocationLeftPanelLink",
+      "name": "mortuary-administration-left-panel-link",
+      "slot": "bed-management-left-panel-slot"
+    },
     {
       "component": "summaryLeftPanelLink",
       "name": "bed-management-home-dashboard-link",
@@ -56,6 +61,20 @@
         "slot": "bed-admission-dashboard-slot",
         "title": "Bed-admission"
       }
+    }
+  ],
+  "workspaces": [
+    {
+      "name": "add-compartment-workspace",
+      "title": "Add Compartment",
+      "component": "addCompartmentWorkspace",
+      "type": "workspace"
+    },
+    {
+      "name": "add-mortuary-location-workspace",
+      "title": "Add Mortuary Location",
+      "component": "addMortuaryLocation",
+      "type": "workspace"
     }
   ]
 }

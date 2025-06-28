@@ -18,9 +18,6 @@ interface VisitResponse {
   totalCount: number;
 }
 
-// interface SQLBedAssignmentResponse {
-
-// }
 
 export interface BedPatientAssignment {
   patientUuid: string;

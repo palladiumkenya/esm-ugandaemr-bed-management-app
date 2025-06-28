@@ -2,10 +2,14 @@ import {
   getAsyncLifecycle,
   defineConfigSchema,
   getSyncLifecycle,
+  registerFeatureFlag,
+  getFeatureFlag,
 } from "@openmrs/esm-framework";
 import { configSchema } from "./config-schema";
 import { createLeftPanelLink } from "./left-panel-link.component";
 import { createDashboardLink } from "./bed-admission/createDashboardLink";
+import AddCompartmentWorkspace from "./mortuary/form/add-compartment/add-compartment.workspace";
+import AddMortuaryLocationWorkspace from "./mortuary/form/add-mortuary-location/add-mortuary-location.workspace";
 
 const moduleName = "@kenyaemr/esm-bed-management-app";
 
@@ -55,6 +59,26 @@ export const adminLeftPanelLink = getSyncLifecycle(
   }),
   options
 );
+
+// Mortuary
+export const MortuaryAllocationLeftPanelLink = getSyncLifecycle(
+  createLeftPanelLink({
+    name: "mortuary-administration",
+    title: "Mortuary Allocation",
+  }),
+  options
+);
+
+export const addCompartmentWorkspace = getSyncLifecycle(
+  AddCompartmentWorkspace,
+  options
+);
+
+export const addMortuaryLocation =  getSyncLifecycle(
+  AddMortuaryLocationWorkspace,
+  options
+);
+
 export const wardLeftPanelLink = getSyncLifecycle(
   createLeftPanelLink({
     name: "ward",
